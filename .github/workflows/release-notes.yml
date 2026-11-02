@@ -29,8 +29,11 @@ jobs:
           tag="${TAG:-$(gh release view --json tagName --jq .tagName)}"
           body="$(gh release view "$tag" --json body --jq .body)"
           scripts/release-notes.sh "$tag" "$tag" > notes.md
-          if printf '%s\n' "$body" | grep -q '^## Install'; then
-            printf '%s\n' "$body" | awk '/^## Install/ { keep = 1 } keep' >> notes.md
+          # Keep everything after the "What's new" part: the install section,
+          # whatever its heading.
+          rest="$(printf '%s\n' "$body" | awk '/^## / && !/^## What.s new/ { keep = 1 } keep')"
+          if [ -n "$rest" ]; then
+            printf '%s\n' "$rest" >> notes.md
           else
             printf '## Install\n\n%s\n' "$body" >> notes.md
           fi

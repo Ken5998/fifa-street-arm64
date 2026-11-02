@@ -34,13 +34,17 @@ jobs:
           sha256="$(sha256sum "$archive" | cut -d' ' -f1)"
           scripts/release-notes.sh "v$version" > notes.md
           cat >> notes.md <<NOTES
-          ## Install
+          ## Kick-off
 
-          The FIFA Street launcher $version for ARM64 Linux handhelds, such as the Retroid Pocket 6 on ArmadaOS.
+          You need FIFA Street (2012, Xbox 360) as a disc image and about 30 GB free on the handheld.
 
-          On the device, in Desktop Mode: unpack FifaStreet-Launcher-linux-arm64.tar.gz, start FifaStreet/fifastreet-launcher and choose your own FIFA Street (2012, Xbox 360) disc image. It fetches this repository's scripts and patches, builds the game on the device (about 30 GB free; keep it on the charger) and adds it to Steam with its artwork. Update gets the latest fixes later. It needs git, Python 3, curl, tar and xz on the device, as ArmadaOS has.
+          - In Desktop Mode, unpack FifaStreet-Launcher-linux-arm64.tar.gz, start FifaStreet/fifastreet-launcher and press **Build** once it has spotted your disc image (**Browse...** if it hasn't).
+          - The ReStreet recompilation is compiled right there on the device, so keep it on the charger. FIFA Street then shows up in Steam.
+          - For later releases, **Update** pulls the fixes and recompiles only what they touch.
 
-          No game files are included. SHA-256: \`$sha256\`
+          Settings are in game/fifastreet.toml, preset for the Retroid Pocket 6 (1280 x 720, aiming at 60 fps). Overlay flickering? **Turn it off** in the launcher disables GPU preemption; restart afterwards.
+
+          Launcher SHA-256: \`$sha256\`. The game itself is not included.
           NOTES
           if gh release view "v$version" > /dev/null 2>&1; then
             gh release upload "v$version" "$archive" --clobber
